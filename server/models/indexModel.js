@@ -18,7 +18,7 @@ exports.create = async (request) => {
                 'create (p1 :Person { name: $nombre, lastname: $apellido }) return p1', { nombre, apellido }
             ))
 
-            const records = query.records
+            const records = query.records[0]._fields
 
 
             data = {
@@ -28,7 +28,7 @@ exports.create = async (request) => {
 
         } catch (error) {
             data = {
-                code: 503,
+                code: 500,
                 msg: error
             }
         }
@@ -42,4 +42,49 @@ exports.create = async (request) => {
 
     return data
 
+}
+
+exports.getAllUsers = async () => {
+
+    const driver = await connect()
+
+    let data;
+
+    if(driver){
+
+        const session = driver.session({ database: 'proyectoneo'})
+
+        try {  
+
+            const query = await session.readTransaction(tx => 
+                tx.run(
+                    'MATCH (users :Person) return users LIMIT 50'
+                ))
+
+                const records = query.records
+
+                data = {
+                    code: 200,
+                    msg: records
+                }
+
+                
+        } catch (error) {
+            data = {
+                code: 500,
+                msg: error
+            }
+        }
+
+    }else {
+
+        data = {
+            code: 502,
+            msg: "502 Bad Gateway"
+        }
+
+    }
+
+
+    return data
 }

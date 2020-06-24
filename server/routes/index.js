@@ -4,7 +4,8 @@ const indexController = require('../controllers/indexController')
 
 const routes = () => {
 
-    Route.post('/prueba', indexController.store)
+    Route.post('/users', indexController.store)
+    Route.get('/users', indexController.show)
 
 
     return Route

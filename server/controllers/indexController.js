@@ -28,3 +28,13 @@ exports.store = async (req, res) => {
     return res.status(data['code']).json(data)
 
 };
+
+
+
+exports.show = async (req, res) => {
+
+    const data = await indexModel.getAllUsers()
+ 
+    return res.status(data['code']).json(data)
+
+}
