@@ -4,6 +4,7 @@ const indexController = require('../controllers/indexController')
 
 const routes = () => {
 
+    Route.put('/users/:id', indexController.update)
     Route.post('/users', indexController.store)
     Route.get('/users', indexController.show)
 
