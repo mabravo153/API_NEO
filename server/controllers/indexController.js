@@ -68,3 +68,57 @@ exports.update = async (req, res) => {
     return res.status(data['code']).json(data)
 
 }
+
+exports.showUser = async (req, res) => {
+
+    const id = req.params.id
+
+    const data = await indexModel.getUserById(id)
+
+    return res.status(data['code']).json(data)
+
+}
+
+exports.delete = async (req, res) => {
+
+    const id = req.params.id
+    let data = await indexModel.removeUser(id)
+
+    return res.status(data['code']).json(data)
+
+}
+
+exports.storeOrder = async (req, res) => {
+
+    const idUser = req.params.id
+    const request = req.body 
+    let errores = []
+    let data;
+
+    if(!request.precio){
+        errores.push('El precio es requerido')
+    }
+    if(!request.producto){
+        errores.push('El producto es requerido')
+    }
+    if(!request.cantidad){
+        errores.push('La cantidad del producto es requerida')
+    }
+
+    if(errores.length){
+        data = {
+            code: 400,
+            msg: errores
+        }
+    }else{
+
+        request.idOrder = uuid.v4()
+        request.date = new Date().toISOString()
+
+        data = await indexModel.createOrder(idUser, request)
+
+    }
+
+    return res.status(data['code']).json(data)
+
+}
