@@ -306,3 +306,54 @@ exports.createOrder = async (idUser, request) => {
     return data
 }
 
+exports.getOrderById = async (id) => {
+
+    const driver = await connect()
+
+    if(driver){
+
+        const session = driver.session({database: 'proyectoneo'})
+
+        try{
+
+            const query = await session.readTransaction(tx => 
+                tx.run('MATCH (p :Person { id: $id } ) -[c :COMPRA]-> (o :Orden) return c,o ', 
+                { id }))
+
+           if(!query.records.length){
+                data = {
+                   code: 404,
+                   msg: "information not available"
+                }
+           }else{
+
+                const Promisefield = Promise.resolve(query.records.map( element => element._fields ))
+                
+                const field = await Promisefield
+
+                data ={
+                    code: 200,
+                    msg: field
+                }
+               
+           }
+
+        }catch (error){
+            console.log(error);
+
+            data = {
+                code: 500,
+                msg: "Internal server error"
+            }
+            
+        }
+
+    }else{
+        data = {
+            code: 502,
+            msg: "502 Bad Gateway"
+        }
+    }
+
+    return data
+}

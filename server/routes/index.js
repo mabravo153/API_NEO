@@ -6,7 +6,7 @@ const routes = () => {
 
     Route.get('/users', indexController.show)
     Route.get('/users/:id', indexController.showUser)
-    //Route.get('/users/:id/orders', indexController.showOrder)
+    Route.get('/users/:id/orders', indexController.showOrder)
 
     Route.post('/users', indexController.store)
     Route.post('/users/:id/orders', indexController.storeOrder)

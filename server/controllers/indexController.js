@@ -122,3 +122,13 @@ exports.storeOrder = async (req, res) => {
     return res.status(data['code']).json(data)
 
 }
+
+exports.showOrder = async (req, res) => {
+
+    const id = req.params.id
+
+    const data = await indexModel.getOrderById(id)
+
+    return res.status(data['code']).json(data)
+
+}
