@@ -26,9 +26,13 @@ exports.create = async (request) => {
             }
 
         } catch (error) {
+
+            console.log(error);
+            
+
             data = {
                 code: 500,
-                msg: error
+                msg: "Internal server error"
             }
         }finally{
             await session.close()
@@ -62,6 +66,12 @@ exports.getAllUsers = async () => {
                     'MATCH (users :Person) return users LIMIT 50'
                 ))
 
+            if(!query.records.length){
+                data = {
+                    code: 404,
+                    msg: "information not available"
+                }
+            }else{
                 const records = query.records
                 const Promisefields = Promise.resolve(records.map(element => element._fields[0].properties))
                 
@@ -71,6 +81,7 @@ exports.getAllUsers = async () => {
                     code: 200,
                     msg: fields
                 }
+            }
 
                 
         } catch (error) {
@@ -168,7 +179,7 @@ exports.updateUser = async (id, request) => {
 
             }else{
 
-                const field = query.records[0]._fields
+                const field = query.records[0]._fields[0].properties
 
                 data = {
                     code: 200,
@@ -210,8 +221,9 @@ exports.removeUser = async (id) => {
         try{
 
             const query = await session.readTransaction(tx => 
-                tx.run('MATCH (P1 :Person {id: $id} ) DELETE P1 ', {id})
+                tx.run('MATCH (P1 :Person {id: $id} ) DELETE P1 return P1 ', {id})
                 )
+
 
             if(!query.records.length){
                 data = {
